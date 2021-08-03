@@ -26,7 +26,7 @@ stages:
     parameters:
       py_version_to_run: ['3.6']
       test_kind_to_run: ['unit']
-      test_marker_to_run: ['not spark and not gpu']
+      test_marker_to_run: ['not spark and not gpu and not notebooks', 'notebooks', 'spark']
       image_to_run: ['ubuntu-18.04'] # 'windows-latest', 'macos-latest' can be added later
 
 # - stage: e2e_tests

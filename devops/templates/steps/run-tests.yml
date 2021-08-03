@@ -13,11 +13,19 @@ parameters:
     - integration
 - name: test_marker  # pytest markers defined in tox.ini: gpu, spark, smoke, integration, deeprec, etc...
   type: string
-  default: not spark and not gpu
+  default: not spark and not gpu and not notebooks
 
 steps:
 - bash: |
-    tox -e py -- tests/${{ parameters.test_kind }} -m "${{ parameters.test_marker }}"
+    if [[ '${{ parameters.test_marker }}' == 'gpu' ]]
+    then
+      tox -e gpu -- tests/${{ parameters.test_kind }} -m "${{ parameters.test_marker }}"
+    elif [[ '${{parameters.test_marker}}' == 'spark' ]]
+    then
+      tox -e spark -- tests/${{ parameters.test_kind }} -m "${{ parameters.test_marker }}"
+    else
+      tox -e default -- tests/${{ parameters.test_kind }} -m "${{ parameters.test_marker }}"
+    fi
   ## You can pass in environment variable for tests to consume like the following:
   # env:
     # ENV_1 : $(ADO_VARIABLE_NAME)
