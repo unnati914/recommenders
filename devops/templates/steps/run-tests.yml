@@ -22,4 +22,4 @@ steps:
   # env:
     # ENV_1 : $(ADO_VARIABLE_NAME)
   workingDirectory: $(Build.SourcesDirectory)
-  displayName: 'Running ${{ parameters.test_kind }} (${{ parameters.test_type }}) tests'
+  displayName: 'Running ${{ parameters.test_kind }} (${{ parameters.test_marker }}) tests'
