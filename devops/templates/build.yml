@@ -24,7 +24,7 @@ jobs:
         - ${{ each test_marker in parameters.test_marker_to_run }}:
         
           - job:
-            displayName: ${{ image }} py${{ py_version }}
+            displayName: ${{ image }} py${{ py_version }} ${{ test_kind }} tests (${{ test_marker }})
             pool:
               vmImage: ${{ image }}
     
@@ -48,12 +48,12 @@ jobs:
                 py_version: ${{ py_version }}
 
             - bash: |
-                cov_file_name='.coverage_${{ test_kind }}_${{ test_marker }}_${{ py_version }}_${{ image }}_$(System.StageName)'
+                cov_file_name='.coverage_${{ test_kind }}_${{ test_marker }}_py${{ py_version }}_${{ image }}'
                 # Replace spaces(' ') with '-'
                 mv .coverage ${cov_file_name// /-}
                 ls .coverage*
               workingDirectory: $(Build.SourcesDirectory)
               displayName: 'Rename coverage report'
             # Cache the coverage report
-            - publish: $(Build.SourcesDirectory)/.coverage_$(System.StageName)_${{ image }}_${{ py_version }}
-              artifact: cov_report_$(System.StageName)_${{ image }}_${{ py_version }}
+            - publish: $(Build.SourcesDirectory)/.coverage*
+              artifact: cov_report_${{ test_kind }}_${{ test_marker }}_py${{ py_version }}_${{ image }}
