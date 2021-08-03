@@ -11,7 +11,8 @@ parameters:
   type: object
   default: ['unit']
 - name: test_marker_to_run
-  type: ['not spark and not gpu']
+  type: object
+  default: ['not spark and not gpu']
 - name: image_to_run
   type: object
   default: ['ubuntu-latest']
