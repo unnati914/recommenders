@@ -48,12 +48,11 @@ jobs:
                 py_version: ${{ py_version }}
 
             - bash: |
-                cov_file_name='.coverage_${{ test_kind }}_${{ test_marker }}_py${{ py_version }}_${{ image }}'
-                # Replace spaces(' ') with '-'
-                mv .coverage ${cov_file_name// /-}
+                mv .coverage '.coverage_${{ test_kind }}_${{ test_marker }}_py${{ py_version }}_${{ image }}'
                 ls .coverage*
               workingDirectory: $(Build.SourcesDirectory)
               displayName: 'Rename coverage report'
+
             # Cache the coverage report
-            - publish: $(Build.SourcesDirectory)/.coverage*
+            - publish: '$(Build.SourcesDirectory)/.coverage_${{ test_kind }}_${{ test_marker }}_py${{ py_version }}_${{ image }}'
               artifact: cov_report_${{ test_kind }}_${{ test_marker }}_py${{ py_version }}_${{ image }}
