@@ -43,7 +43,7 @@ jobs:
                 test_kind: ${{ test_kind }}
                 test_marker: ${{ test_marker }}
 
-            - template: steps/publish-test-results.yml
+            - template: steps/publish-test-report.yml
               parameters:
                 py_version: ${{ py_version }}
 
