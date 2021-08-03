@@ -1,0 +1,57 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+# ---------------------------------------------------------
+
+parameters:
+- name: py_version_to_run
+  type: object
+  default: ['3.6', '3.7']
+- name: test_kind_to_run
+  type: object
+  default: ['unit']
+- name: test_marker_to_run
+  type: ['not spark and not gpu']
+- name: image_to_run
+  type: object
+  default: ['ubuntu-latest']
+
+jobs:
+  - ${{ each image in parameters.image_to_run }}:
+    - ${{ each py_version in parameters.py_version_to_run }}:
+      - job:
+        displayName: ${{ image }} py${{ py_version }}
+        pool:
+          vmImage: ${{ image }}
+        steps:
+
+        - task: UsePythonVersion@0
+          inputs:
+            versionSpec: ${{ py_version }}
+            addToPath: true
+            architecture: 'x64'
+          displayName: 'Use Python ${{ py_version }}'
+
+        - template: install-dependencies.yml
+
+        - ${{ each test_kind in parameters.test_kind_to_run }}:
+          - ${{ each test_marker in parameters.test_marker_to_run }}:
+            - template: steps/run-tests.yml
+              parameters:
+                test_kind: ${{ test_kind }}
+                test_marker: ${{ test_marker }}
+
+            - template: steps/publish-test-results.yml
+              parameters:
+                py_version: ${{ py_version }}
+
+            - bash: |
+                cov_file_name='.coverage_${{ test_kind }}_${{ test_marker }}_${{ py_version }}_${{ image }}_$(System.StageName)'
+                # Replace spaces(' ') with '-'
+                mv .coverage ${cov_file_name// /-}
+                ls .coverage*
+              workingDirectory: $(Build.SourcesDirectory)
+              displayName: 'Rename coverage report'
+            # Cache the coverage report
+            - publish: $(Build.SourcesDirectory)/.coverage_$(System.StageName)_${{ image }}_${{ py_version }}
+              artifact: cov_report_$(System.StageName)_${{ image }}_${{ py_version }}

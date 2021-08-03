@@ -1,0 +1,25 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+# ---------------------------------------------------------
+
+# Template for running tests on multiple Python versions and platforms
+parameters:
+- name: test_kind  # unit/smoke/integration
+  type: string
+  values:
+    - unit
+    - smoke
+    - integration
+- name: test_marker  # pytest markers defined in tox.ini: gpu, spark, smoke, integration, deeprec, etc...
+  type: string
+  default: not spark and not gpu
+
+steps:
+- bash: |
+    tox -e py -- tests/${{ parameters.test_kind }} -m "${{ parameters.test_marker }}"
+  ## You can pass in environment variable for tests to consume like the following:
+  # env:
+    # ENV_1 : $(ADO_VARIABLE_NAME)
+  workingDirectory: $(Build.SourcesDirectory)
+  displayName: 'Running ${{ parameters.test_kind }} (${{ parameters.test_type }}) tests'
