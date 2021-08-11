@@ -65,7 +65,9 @@ jobs:
         # different kind of tests are located in tests/<unit|integration|smoke> folders
         test-kind: ['unit'] 
         # pytest markers configured in tox.ini. See https://docs.pytest.org/en/6.2.x/example/markers.html
-        test-marker: ['not gpu and not spark and not notebooks', 'not gpu and notebooks and not spark']
+        test-marker: ['not gpu and not spark and not notebooks', 
+        #'not gpu and notebooks and not spark'
+        ]
 
     steps:
     - uses: actions/checkout@v2
